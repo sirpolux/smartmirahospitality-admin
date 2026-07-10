@@ -66,15 +66,15 @@ export default function DashboardLayout({ children}) {
                         {/* Brand */}
                         <div className="text-center mb-6 mt-8">
                             <img
-                                src="/img/logo-with-name.png"
+                                src="/img/logo.png"
                                 alt="Logo"
-                                className="mx-auto w-20 rounded-lg shadow"
+                                className="mx-auto w-20 rounded-lg "
                             />
                             <div className="mt-3 font-bold text-lg tracking-wide">
-                                <p className="text-primary font-bold">SmartMirah</p>
-                                <p className="text-secondary">Hospitality Limited</p>
+                                <p className="text-gray-700 font-bold">SmartMirah</p>
+                                <p className="text-gray-700">Hospitality Limited</p>
                             </div>
-                            <p className="text-xs text-gray-500">Admin Panel</p>
+                            <p className="text-xs font-bold text-gray-800">Admin Panel</p>
                         </div>
 
                         {/* Navigation */}
