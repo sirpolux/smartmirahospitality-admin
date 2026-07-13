@@ -58,11 +58,11 @@ export default function Show({ item, auth, breadcrumbs }) {
             </Link>
 
             <Link
-              href={route("item.feature.create", data.id)}
+              href={route("item-details.create", data.id)}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
             >
               <TagIcon className="w-4 h-4" />
-              Add Feature
+              Add Details
             </Link>
           </div>
         </div>
@@ -148,18 +148,18 @@ export default function Show({ item, auth, breadcrumbs }) {
         <div className="bg-white rounded-xl border p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-medium text-gray-700 ">
-              Item Features
+              Item Details
             </h3>
 
             <Link
-              href={route("item.feature.create", data.id)}
+              href={route("item-details.create", data.id)}
               className="text-sm text-indigo-600 hover:underline"
             >
-              Add / Edit Features
+              Add / Edit Details
             </Link>
           </div>
 
-          {data.features.length > 0 ? (
+          {data.item_details.length > 0 ? (
             <div className="divide-y">
               {data.features.map((feature) => (
                 <div

@@ -124,7 +124,7 @@ class ItemController extends Controller
     public function show(Item $item)
     {
         //
-        $item->load(['featureSpecifications']);
+        $item->load(['itemDetails']);
         $item->load(['uploads']);
         return inertia('Item/Show', [
             'item'=>new ItemResource($item->load(['createdBy', 'updatedBy'])),

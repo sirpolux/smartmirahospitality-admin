@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('item_name');
             $table->text('item_description')->nullable();
+            $table->string('manufacturer')->nullable();
             $table->decimal('price', 8, 2);
             $table->enum('status', ['available', 'unavailable'])->default('available');
             $table->boolean('deleted')->default(false);
-            $table->foreignId('created_ by')->constrained('users')->nullOnDelete();
+            $table->foreignId('created_by')->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->constrained('users')->nullOnDelete();
             $table->timestamps();
         });

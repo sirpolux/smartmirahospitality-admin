@@ -19,4 +19,24 @@ class Item extends Model
         'created_by',
         'updated_by',
     ];  
+
+    public function uploads()
+    {
+        return $this->hasMany(Upload::class, 'item_id');
+    }
+
+    public function itemDetails()
+    {
+        return $this->hasMany(ItemDetail::class, 'item_id');
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }   
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
 }

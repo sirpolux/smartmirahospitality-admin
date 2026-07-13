@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\ItemDetailsController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StockController;
@@ -38,6 +39,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('transactions', TransactionController::class);
     Route::resource('account', AccountController::class);
     Route::resource('cart-item', CartItemController::class);
+    Route::resource('item-details', ItemDetailsController::class);
+    Route::get('item/image/add/{item}', [ItemController::class, 'addImage'])->name('item.image.add');
 
 });
 
