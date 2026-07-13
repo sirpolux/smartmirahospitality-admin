@@ -24,7 +24,7 @@ class ItemController extends Controller
         $keyword = request('keyword');
     
         $query = Item::query()
-            ->where('is_deleted', false);
+            ->where('deleted', false);
     
         // Search filters safely grouped
         if (!empty($keyword)) {
@@ -43,6 +43,8 @@ class ItemController extends Controller
             ->withQueryString(); // keeps filters on pagination
     
             
+
+            // dd($items);
         return inertia('Item/Index', [
             'items'      => ItemResource::collection($items),
             'filters'    => [
