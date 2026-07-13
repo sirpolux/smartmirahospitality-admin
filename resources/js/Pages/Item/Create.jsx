@@ -80,7 +80,7 @@ export default function Create({ response = null , breadcrumbs}) {
                         transition={{ delay: 0.2 }}
                         className="text-xl font-bold text-gray-800  mb-8 flex items-center gap-3"
                     >
-                        <Boxes className="text-green-600" /> Add New Inventory Item
+                        <Boxes className="text-secondary" /> Add New Inventory Item
                     </motion.h2>
 
                     <form onSubmit={onSubmit} className="space-y-8">
@@ -199,7 +199,7 @@ export default function Create({ response = null , breadcrumbs}) {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 type="submit"
-                                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg shadow-md font-medium tracking-wide transition-all"
+                                className="bg-primary hover:bg-secondary text-white px-6 py-3 rounded-lg shadow-md font-medium tracking-wide transition-all"
                             >
                                 Add Item
                             </motion.button>
