@@ -27,6 +27,7 @@ class StoreItemRequest extends FormRequest
             'item_description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'manufacturer' => 'nullable|string|max:255',
+            'category_id' => 'required|exists:item_categories,id',
         ];
     }
 }

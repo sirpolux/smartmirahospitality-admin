@@ -28,6 +28,7 @@ export default function DashboardLayout({ children}) {
 
     const menuItems = [
         { label: "Dashboard", link: "dashboard", icon: <MdDashboard className="text-xl" /> },
+        { label: "Item Category", link: "item-category.index", icon: <MdOutlineSavings className="text-xl" /> },
         { label: "Inventory", link: "item.index", icon: <MdOutlineInventory className="text-xl" /> },
         { label: "Stock", link: "stock.index", icon: <AiOutlineStock className="text-xl" /> },
         { label: "Cart", link: "cart.index", icon: <MdOutlineShoppingCart className="text-xl" /> },

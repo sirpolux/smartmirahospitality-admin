@@ -14,6 +14,7 @@ class Item extends Model
         'item_name',
         'item_description',
         'price',
+        'category_id',
         'manufacturer',
         'status',
         'deleted',

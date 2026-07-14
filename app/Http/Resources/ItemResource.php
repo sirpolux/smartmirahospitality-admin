@@ -26,7 +26,7 @@ class ItemResource extends JsonResource
             'uploads' => UploadResource::collection($this->whenLoaded('uploads')),
             'item_details' => ItemDetailResource::collection($this->whenLoaded('itemDetails')),
             "created_by" => $this->createdBy ? new UserBaseResource($this->createdBy) : null,
-            "updated_by" => $this->updatedBy ? new UserBaseResource($this->updated):null
+            "updated_by" => $this->updatedBy ? new UserBaseResource($this->updatedBy) : null,
         ];
     }
 }

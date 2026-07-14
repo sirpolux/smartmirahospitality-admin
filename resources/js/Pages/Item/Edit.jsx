@@ -4,21 +4,22 @@ import DashboardLayout from "../DashboardLayout";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 
-export default function Edit({ item, breadcrumbs }) {
+export default function Edit({ item, breadcrumbs, categories }) {
   const { data, setData, put, processing, errors } = useForm({
     item_name: item.data.item_name || "",
     item_description: item.data.item_description || "",
     price: item.data.price || "",
     manufacturer: item.data.manufacturer || "",
+    category_id: item.data.category?.id || "",
   });
 
   const submit = (e) => {
     e.preventDefault();
 
     put(route("item.update", item.data.id), {
-        onSuccess:()=>{
-            toast.success("Item updated successfully");
-        }
+      onSuccess: () => {
+        toast.success("Item updated successfully");
+      },
     });
   };
 
@@ -66,10 +67,10 @@ export default function Edit({ item, breadcrumbs }) {
               )}
             </div>
 
-                        {/* Item Manufacturer */}
-                        <div>
+            {/* Item Manufacturer */}
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Item manufacturer
+                Manufacturer
               </label>
               <input
                 type="text"
@@ -82,9 +83,38 @@ export default function Edit({ item, breadcrumbs }) {
                       : "border-gray-300"
                   }`}
               />
-              {errors.item_name && (
+              {errors.manufacturer && (
                 <p className="mt-1 text-xs text-red-600">
                   {errors.manufacturer}
+                </p>
+              )}
+            </div>
+
+            {/* Category */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Category *
+              </label>
+              <select
+                value={data.category_id}
+                onChange={(e) => setData("category_id", e.target.value)}
+                className={`w-full rounded-lg border px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white
+                  ${
+                    errors.category_id
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  }`}
+              >
+                <option value="">-- Select Category --</option>
+                {categories?.data?.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.item_name}
+                  </option>
+                ))}
+              </select>
+              {errors.category_id && (
+                <p className="mt-1 text-xs text-red-600">
+                  {errors.category_id}
                 </p>
               )}
             </div>

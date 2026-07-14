@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->string('item_name');
+            $table->string('item_name'); 
+            $table->foreignId('category_id')->constrained('item_categories')->nullOnDelete();
             $table->text('item_description')->nullable();
             $table->string('manufacturer')->nullable();
             $table->decimal('price', 8, 2);

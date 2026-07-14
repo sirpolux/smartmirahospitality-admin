@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ItemCategoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ItemDetailsController;
 use App\Http\Controllers\OrderController;
@@ -40,6 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('account', AccountController::class);
     Route::resource('cart-item', CartItemController::class);
     Route::resource('item-details', ItemDetailsController::class);
+    Route::resource('item-category', ItemCategoryController::class);
     Route::get('item/image/add/{item}', [ItemController::class, 'addImage'])->name('item.image.add');
 
 });

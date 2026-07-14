@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
+import SelectInput from "@/Components/SelectInput";
 import TextAreaInput from "@/Components/TextAreaInput";
 import TextInput from "@/Components/TextInput";
 import { Head, useForm, usePage } from "@inertiajs/react";
@@ -9,12 +10,10 @@ import { UploadCloud, Boxes } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import DashboardLayout from "../DashboardLayout";
-import SelectInput from "@/Components/SelectInput";
 import Breadcrumbs from "@/Components/Breadcrumb";
 
-export default function Create({ response = null , breadcrumbs}) {
+export default function Create({ response = null, breadcrumbs, categories }) {
     const { cloudinary } = usePage().props;
-    // const cloudName = cloudinary.cloudName;
 
     const [imagePreview, setImagePreview] = useState(null);
     const { data, setData, post, errors, reset } = useForm({
@@ -22,37 +21,13 @@ export default function Create({ response = null , breadcrumbs}) {
         price: "",
         item_description: "",
         manufacturer: "",
+        category_id: "",
         status: "",
     });
-
-    // const handleFileUpload = async (e) => {
-    //     const file = e.target.files[0];
-    //     if (!file) return;
-
-    //     const reader = new FileReader();
-    //     reader.onload = () => setImagePreview(reader.result);
-    //     reader.readAsDataURL(file);
-
-    //     const formData = new FormData();
-    //     formData.append("file", file);
-    //     formData.append("upload_preset", "ave_mater");
-
-    //     try {
-    //         const res = await axios.post(
-    //             `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-    //             formData
-    //         );
-
-    //         setData("image", res.data.secure_url);
-    //     } catch (error) {
-    //         console.error("Cloudinary upload failed", error);
-    //     }
-    // };
 
     const onSubmit = (e) => {
         e.preventDefault();
         post(route("item.store"), {
-            //data,
             onSuccess: () => {
                 toast.success("Item successfully added to inventory");
                 reset();
@@ -117,6 +92,29 @@ export default function Create({ response = null , breadcrumbs}) {
                                 <InputError message={errors.manufacturer} className="mt-1 text-red-600" />
                             </motion.div>
 
+                            {/* Category */}
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.4 }}
+                            >
+                                <InputLabel htmlFor="category_id" value="Category *" />
+                                <SelectInput
+                                    name="category_id"
+                                    value={data.category_id}
+                                    onChange={(e) => setData("category_id", e.target.value)}
+                                    className="mt-1 block w-full"
+                                >
+                                    <option value="">-- Select Category --</option>
+                                    {categories?.data?.map((category) => (
+                                        <option key={category.id} value={category.id}>
+                                            {category.name}
+                                        </option>
+                                    ))}
+                                </SelectInput>
+                                <InputError message={errors.category_id} className="mt-1 text-red-600" />
+                            </motion.div>
+
                             {/* Price */}
                             <motion.div
                                 initial={{ opacity: 0, x: 20 }}
@@ -133,7 +131,6 @@ export default function Create({ response = null , breadcrumbs}) {
                                 />
                                 <InputError message={errors.price} className="mt-1 text-red-600" />
                             </motion.div>
-
 
                             {/* Description */}
                             <motion.div
@@ -152,41 +149,6 @@ export default function Create({ response = null , breadcrumbs}) {
                                 <InputError message={errors.item_description} className="mt-1 text-red-600" />
                             </motion.div>
                         </div>
-
-                        {/* Image Upload */}
-                        {/* <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6 }}
-                        >
-                            <InputLabel value="Item Image (optional)" />
-                            <div className="mt-2 flex flex-col items-center justify-center border border-dashed border-gray-400 p-6 rounded-xl cursor-pointer hover:border-green-500 transition-all">
-                                <label className="text-center cursor-pointer">
-                                    <UploadCloud className="mx-auto mb-2 text-green-600" size={32} />
-                                    <p className="text-gray-600 ">Click to upload image</p>
-                                    <input
-                                        type="file"
-                                        onChange={handleFileUpload}
-                                        className="hidden"
-                                        accept="image/*"
-                                    />
-                                </label>
-                            </div>
-
-                            <AnimatePresence>
-                                {imagePreview && (
-                                    <motion.img
-                                        key="preview"
-                                        initial={{ opacity: 0, scale: 0.9 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0.9 }}
-                                        transition={{ duration: 0.3 }}
-                                        src={imagePreview}
-                                        className="mt-4 w-40 h-40 object-cover rounded-xl shadow-lg border"
-                                    />
-                                )}
-                            </AnimatePresence>
-                        </motion.div> */}
 
                         {/* Submit */}
                         <motion.div
