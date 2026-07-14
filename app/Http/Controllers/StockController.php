@@ -109,16 +109,16 @@ class StockController extends Controller
         $data = [
             'item_id' => $request->item_id,
             'quantity' => $request->quantity,
-            'price' => $request->price, 
-            'status' => $request->status ?? 'IN_STOCK',
-           'supplier' => $request->supplied_by ?? 'Self Purchase',
+            'buying_price' => $request->price, 
+            'status' => $request->status ?? 'available',
+            'supplier_name' => $request->supplied_by ?? 'Self Purchase',
             'added_by' => $user->id,
         ];
         $stock = Stock::create($data);
         //update item quantity
         $item = $stock->item;
-        $item->quantity += $stock->quantity;
-        $item->status = "IN_STOCK";
+        $item->quantity = $item->quantity==null?$stock->quantity:$item->quantity+$stock->quantity;
+        $item->status = "available";
         $item->save();
         return redirect()->route('stock.index')->with('message', 'Stock added successfully')->with('status', 'success');
     }

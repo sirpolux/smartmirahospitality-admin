@@ -19,6 +19,7 @@ class ItemResource extends JsonResource
             'item_name' => $this->item_name,
             'item_description' => $this->item_description,
             'price' => $this->price,
+            'quantity' => $this->quantity,
             'manufacturer' => $this->manufacturer,
             'status' => $this->status,
             'uploads' => UploadResource::collection($this->whenLoaded('uploads')),

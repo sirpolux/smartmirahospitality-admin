@@ -12,9 +12,20 @@ class Stock extends Model
     protected $fillable = [
         'item_id',
         'quantity',
-        'price',
+        'buying_price',
         'supplied_by',
-        'created_by',
+        'added_by',
         'updated_by',
     ];
+
+
+    public function item()
+    {
+        return $this->belongsTo(Item::class, 'item_id');
+    }
+
+    public function addedBy()
+    {
+        return $this->belongsTo(User::class, 'added_by');
+    }
 }

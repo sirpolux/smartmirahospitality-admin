@@ -14,6 +14,7 @@ class Item extends Model
         'item_name',
         'item_description',
         'price',
+        'manufacturer',
         'status',
         'deleted',
         'created_by',
@@ -38,5 +39,10 @@ class Item extends Model
     public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function stocks()
+    {
+        return $this->hasMany(Stock::class, 'item_id');
     }
 }
