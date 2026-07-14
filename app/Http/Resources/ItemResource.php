@@ -22,6 +22,7 @@ class ItemResource extends JsonResource
             'quantity' => $this->quantity,
             'manufacturer' => $this->manufacturer,
             'status' => $this->status,
+            'category' => $this->category ? new ItemCategoryResource($this->category) : null,
             'uploads' => UploadResource::collection($this->whenLoaded('uploads')),
             'item_details' => ItemDetailResource::collection($this->whenLoaded('itemDetails')),
             "created_by" => $this->createdBy ? new UserBaseResource($this->createdBy) : null,
