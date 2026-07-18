@@ -99,7 +99,7 @@ class ItemController extends Controller
             "updated_by"       => $user->id,
         ];
 
-        dd($data);
+       // dd($data);
         $item = Item::create($data);
 
         return to_route('item.show', $item->id)->with([
