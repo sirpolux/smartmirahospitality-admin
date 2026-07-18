@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->string('action');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

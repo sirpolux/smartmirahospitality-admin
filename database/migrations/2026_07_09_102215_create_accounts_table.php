@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('account_number');
             $table->string('bank_name');
             $table->boolean('is_primary_account')->default(false);
+            $table->foreignId('added_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

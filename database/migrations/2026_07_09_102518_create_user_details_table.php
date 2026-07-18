@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('user_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->nullOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('phone_number')->nullable();
             $table->string('company_address')->nullable();
             $table->string('state')->nullable();

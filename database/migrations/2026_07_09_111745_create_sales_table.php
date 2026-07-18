@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('item_id')->nullable()->constrained('items')->nullOnDelete();
+            $table->integer('quantity');
+            $table->double('unit_price');
+            $table->double('total_price');
             $table->timestamps();
         });
     }
