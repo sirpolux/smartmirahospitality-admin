@@ -31,9 +31,8 @@ class DataService{
 
 
     public function pendingOrders(){
-        $orderPendinfg = Order::where('status', "PAYMENT_COMFIRMED")
-        ->orWhere('status', 'PENDING_PAYMENT')
-        ->orWhere('status', 'PENDING_CONFIRMATION')
+        $orderPendinfg = Order::where('status', "confirmed")
+        ->orWhere('status', 'pending')
         ->count();
         return $orderPendinfg;
     }
@@ -48,25 +47,22 @@ class DataService{
 
     public function pendingTransaction()
     {
-        return Transaction::whereIn('transaction_status', [
-                'PENDING_CONFIRMATION',
-                'PENDING',
+        return Transaction::whereIn('status', [
+                'pending'
             ])
             ->whereIn('purpose', [
-                'ITEM_PURCHASE',
-                'SAVINGS',
+                'payment',
             ])
             ->count();
     }
     
 
     public function totalTransaction(){
-        return Transaction::where('purpose', 'ITEM_PURCHASE')->orWhere('purpose', 'SAVINGS')->count();
+        return Transaction::where('purpose', 'payment')->count();
     }
 
     public function completedTransaction(){
-        return Transaction::where('transaction_status', 'APPROVED')
-        ->orWhere("transaction_status", "PAID")
+        return Transaction::where('status', 'completed')
         ->count();
     }
 
@@ -79,8 +75,7 @@ class DataService{
     }
 
     public function totalApprovedTransactions(){
-        return Transaction::where('transaction_status', 'APPROVED')
-        ->orWhere("transaction_status", "PAID")
+        return Transaction::where('status', 'completed')
         ->sum('amount');
     }
 
