@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ItemCategoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ItemDetailsController;
+use App\Http\Controllers\ItemImageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StockController;
@@ -35,15 +36,30 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('item', ItemController::class);
     Route::resource('cart', CartItemController::class);
-    Route::resource('stock', StockController::class); 
+    Route::resource('stock', StockController::class);
     Route::resource('order', OrderController::class);
     Route::resource('transactions', TransactionController::class);
     Route::resource('account', AccountController::class);
     Route::resource('cart-item', CartItemController::class);
     Route::resource('item-details', ItemDetailsController::class);
+    // Route::post('item/image/upload/{item}', [ItemController::class, 'uploadImage'])->name('item.image.store');
+
+    Route::prefix('item/image')->group(function () {
+        Route::post('{item}', [ItemImageController::class, 'store'])
+            ->name('item.image.store');
+
+        Route::delete('{image}', [ItemImageController::class, 'destroy'])
+            ->name('item.image.delete');
+
+        Route::patch('{image}/primary', [ItemImageController::class, 'setPrimary'])
+            ->name('item.image.primary');
+
+        Route::patch('{item}/reorder', [ItemImageController::class, 'reorder'])
+            ->name('item.image.reorder');
+    });
+
     Route::resource('item-category', ItemCategoryController::class);
     Route::get('item/image/add/{item}', [ItemController::class, 'addImage'])->name('item.image.add');
-
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
