@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('uploads', function (Blueprint $table) {
             $table->id();
-            $table->string('file_name')->nullable();
+            $table->foreignId('item_id')->nullable()->constrained('items')->cascadeOnDelete();
+            $table->foreignId('transaction_id')->nullable()->constrained('transactions')->nullOnDelete();
+            $table->string('public_id')->nullable();
             $table->string('file_path');
             $table->string('file_type')->nullable();
+            $table->boolean('is_primary')->nullable();
+            $table->integer('position')->nullable()->default(0);
             $table->foreignId('uploaded_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('item_id')->nullable()->constrained('items')->nullOnDelete();
-            $table->foreignId('transaction_id')->nullable()->constrained('transactions')->nullOnDelete();
             $table->timestamps();
         });
     }
@@ -28,6 +30,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('uploads');
     }
 };

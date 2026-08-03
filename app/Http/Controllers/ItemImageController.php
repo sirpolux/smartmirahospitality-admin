@@ -6,21 +6,19 @@ use App\Models\Item;
 use App\Models\Upload;
 use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ItemImageController extends Controller
 {
     public function store(
-        
         Request $request,
         Item $item,
         CloudinaryService $cloudinary
     ) {
-
-    
         $request->validate([
-            'images' => ['required', 'array'],
-            'images.*' => ['image', 'max:2048'],
+            'images'    => ['required', 'array'],
+            'images.*'  => ['image', 'max:2048'],
         ]);
 
         $existingCount = $item->uploads()->count();
@@ -32,23 +30,17 @@ class ItemImageController extends Controller
             ]);
         }
 
-        DB::transaction(function () use (
-            $request,
-            $item,
-            $cloudinary,
-            $existingCount
-        ) {
+        DB::transaction(function () use ($request, $item, $cloudinary, $existingCount) {
             foreach ($request->file('images') as $index => $file) {
-              // // dd($file);
-              // dd($cloudinary);
                 $uploaded = $cloudinary->upload($file, 'ovey_store');
 
                 Upload::create([
-                    'item_id' => $item->id,
-                    'file_path' => $uploaded['url'],
-                    'public_id' => $uploaded['public_id'],
-                    'position' => $existingCount + $index,
+                    'item_id'    => $item->id,
+                    'file_path'  => $uploaded['url'],
+                    'public_id'  => $uploaded['public_id'],
+                    'position'   => $existingCount + $index,
                     'is_primary' => $item->uploads()->count() === 0,
+                    'uploaded_by'=> Auth::id(),
                 ]);
             }
         });
@@ -61,7 +53,9 @@ class ItemImageController extends Controller
         CloudinaryService $cloudinary
     ) {
         DB::transaction(function () use ($image, $cloudinary) {
-            $cloudinary->delete($image->public_id);
+            if ($image->public_id) {
+                $cloudinary->delete($image->public_id);
+            }
             $image->delete();
         });
 

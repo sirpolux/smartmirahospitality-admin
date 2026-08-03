@@ -9,7 +9,6 @@ use App\Http\Resources\ItemCategoryResource;
 use App\Http\Resources\ItemResource;
 use App\Models\Item;
 use App\Models\ItemCategory;
-use App\Services\LogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -230,6 +229,7 @@ class ItemController extends Controller
             'breadcrumbs' => [
                 ['label' => 'Items', 'url' => route('item.index')],
                 ['label' => 'View Item', 'url' => route('item.show', $item->id)],
+                ['label'=>$item->item_name, 'url' => route('item.show', $item->id)],
                 ['label' => 'Add Image', 'url' => route('item.image.add', $item->id)],
             ],
         ]);

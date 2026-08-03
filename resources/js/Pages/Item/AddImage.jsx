@@ -1,13 +1,9 @@
 import Breadcrumbs from "@/Components/Breadcrumb";
 import DashboardLayout from "../DashboardLayout";
 import { Head, useForm } from "@inertiajs/react";
-import { useMemo, useState } from "react";
-import {
-  UploadCloud,
-  ImagePlus,
-  Trash2,
-  X,
-} from "lucide-react";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
+import { ImagePlus, X } from "lucide-react";
 
 export default function AddImage({ item, breadcrumbs }) {
   const MAX_IMAGES = 5;
@@ -57,8 +53,13 @@ export default function AddImage({ item, breadcrumbs }) {
       forceFormData: true,
       preserveScroll: true,
       onError: () => {
-        toast.errors(errors);
-      }
+        Object.values(errors)
+          .flat()
+          .forEach((message) => toast.error(message));
+      },
+      onSuccess: () => {
+        toast.success("Images uploaded successfully.");
+      },
     });
   };
 
@@ -164,7 +165,7 @@ export default function AddImage({ item, breadcrumbs }) {
                 disabled={processing || data.images.length === 0}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 transition"
               >
-                <UploadCloud className="w-4 h-4" />
+                <ImagePlus className="w-4 h-4" />
                 Upload Images
               </button>
             </div>
