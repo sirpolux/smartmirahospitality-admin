@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('user_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('phone_number')->nullable();
-            $table->string('company_address')->nullable();
-            $table->string('state')->nullable();
-            $table->string('company_name')->nullable();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('phone', 20)->nullable();
+            $table->string('company_name', 255)->nullable();
+            $table->string('company_role', 100)->nullable();
+            $table->text('address')->nullable();
+            $table->string('city', 100)->nullable();
+            $table->string('state', 100)->nullable();
+            $table->string('business_type', 50)->nullable();
+            $table->boolean('is_profile_complete')->default(false);
             $table->timestamps();
         });
     }

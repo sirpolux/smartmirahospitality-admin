@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('transaction_id')->nullable()->constrained('transactions')->nullOnDelete();
             $table->integer('total_quantity');
             $table->double('total_price');
             $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');

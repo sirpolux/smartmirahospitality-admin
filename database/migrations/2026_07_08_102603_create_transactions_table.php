@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
             $table->enum('purpose', ['payment', 'refund'])->default('payment');
             $table->foreignId('confirmed_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('reference')->nullable();
+            $table->foreignId('order_id')->nullable()->constrained('orders')->nullOnDelete();
             $table->dateTime('confirmed_at')->nullable();
             $table->timestamps();
         });
