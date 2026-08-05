@@ -12,7 +12,7 @@ class UpdateTransactionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,7 @@ class UpdateTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'status' => ['required', 'in:pending,confirmed,rejected,failed,refunded'],
         ];
     }
 }

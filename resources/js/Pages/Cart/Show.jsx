@@ -1,133 +1,227 @@
-import React, { useState } from "react";
-import { ArrowLeft, ShoppingCart, UserRound, Package } from "lucide-react";
-import { Link, usePage, Head } from "@inertiajs/react";
-
+import { Head, Link } from "@inertiajs/react";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/Components/ui/card";
-
+  ArrowLeftIcon,
+  EnvelopeIcon,
+  PhoneIcon,
+  MapPinIcon,
+  BuildingOfficeIcon,
+} from "@heroicons/react/24/outline";
 import DashboardLayout from "../DashboardLayout";
 import Breadcrumbs from "@/Components/Breadcrumb";
 
-export default function Show({ breadcrumbs }) {
-  const { cart } = usePage().props;
-  const data = cart.data;
+const statusStyles = {
+  active: "bg-green-100 text-green-700",
+  completed: "bg-blue-100 text-blue-700",
+  cancelled: "bg-red-100 text-red-700",
+};
 
-  const [total_cart_cost, setTotalCost] = useState();
+const statusLabels = {
+  active: "Active",
+  completed: "Completed",
+  cancelled: "Cancelled",
+};
 
-  const cart_items_list = data.cart_items; 
+export default function Show({ cart, breadcrumbs }) {
+  const data = cart?.data;
 
-  let mtotal=0;
-  cart_items_list.forEach(element  => {
-     mtotal+= element.item.price * element.quantity;
-  });
- // setTotalCost(mtotal);
+  if (!data) return null;
 
- console.log("Total Cart Cost:", mtotal);
-  const { id, user, total_cost, cart_items, status, created_at } = data;
+  const statusClass =
+    statusStyles[data.status] || "bg-gray-100 text-gray-700";
+  const customer = data.user || {};
 
-  const formatCurrency = (amount) =>
-    new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-    }).format(amount ?? 0);
+  const formatCurrency = (value) =>
+    "₦" + Number(value || 0).toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
 
-  const getImage = (item) =>
-    item?.uploads?.[0]?.file_path ??
-    "https://via.placeholder.com/300";
+  const formatDate = (date) => {
+    if (!date) return "—";
+    return new Date(date).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const location = [customer.details?.city, customer.details?.state]
+    .filter(Boolean)
+    .join(", ");
 
   return (
     <DashboardLayout>
-      <Head title={`Cart #${id}`} />
-      <Breadcrumbs breadcrumbs={breadcrumbs} />
+      <Head title={`Cart #${data.id}`} />
 
-      <div className="max-w-6xl mx-auto p-4 sm:p-6">
-        {/* Back */}
-        <Link
-          href={route("cart.index")}
-          className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-emerald-600 mb-4"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to carts
-        </Link>
+      <div className="p-6 space-y-6">
+        <Breadcrumbs breadcrumbs={breadcrumbs} />
 
-        {/* Cart summary */}
-        <Card className="mb-6">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <ShoppingCart className="w-5 h-5 text-emerald-600" />
-              Cart Details
-            </CardTitle>
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">
+              Cart #{data.id}
+            </h1>
+            <p className="text-sm text-gray-500">
+              Created {formatDate(data.created_at)}
+            </p>
+          </div>
 
-            <span className="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-600">
-              {status}
+          <div className="flex flex-wrap items-center gap-3">
+            <span
+              className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${statusClass}`}
+            >
+              {statusLabels[data.status] || data.status}
             </span>
-          </CardHeader>
 
-          <CardContent className="grid sm:grid-cols-2 gap-4 text-sm">
-            <div className="space-y-1">
-              <p className="flex items-center gap-2">
-                <UserRound className="w-4 h-4 text-gray-500" />
-                <span className="font-medium">{user.name}</span>
-              </p>
-              <p className="text-gray-500">{user.email}</p>
-              <p className="text-gray-400">
-                Created: {new Date(created_at).toLocaleString()}
-              </p>
+            <Link
+              href={route("cart.index")}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
+            >
+              <ArrowLeftIcon className="w-4 h-4" />
+              Back to Carts
+            </Link>
+          </div>
+        </div>
+
+        {/* Customer & Contact */}
+        <div className="bg-white rounded-xl border overflow-hidden">
+          <div className="px-6 py-4 border-b bg-gray-50">
+            <h2 className="font-semibold text-gray-700">Customer & Contact</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="bg-gray-100 rounded-full p-2">
+                  <BuildingOfficeIcon className="w-5 h-5 text-gray-500" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Name</p>
+                  <p className="font-medium text-gray-800">
+                    {customer.name || "Guest"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="bg-gray-100 rounded-full p-2">
+                  <EnvelopeIcon className="w-5 h-5 text-gray-500" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Email</p>
+                  <p className="font-medium text-gray-800">
+                    {customer.email || "—"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="bg-gray-100 rounded-full p-2">
+                  <PhoneIcon className="w-5 h-5 text-gray-500" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Phone</p>
+                  <p className="font-medium text-gray-800">
+                    {customer.details?.phone || "—"}
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="text-right space-y-1">
-              <p className="text-gray-500">Cart ID</p>
-              <p className="font-semibold">#{id}</p>
-              <p className="font-bold text-lg text-emerald-600">
-                {formatCurrency(mtotal)}
-              </p>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="bg-gray-100 rounded-full p-2">
+                  <BuildingOfficeIcon className="w-5 h-5 text-gray-500" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Company</p>
+                  <p className="font-medium text-gray-800">
+                    {customer.details?.company_name || "—"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="bg-gray-100 rounded-full p-2">
+                  <MapPinIcon className="w-5 h-5 text-gray-500" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Address</p>
+                  <p className="font-medium text-gray-800">
+                    {customer.details?.address || "—"}
+                  </p>
+                  {location && (
+                    <p className="text-sm text-gray-500">{location}</p>
+                  )}
+                </div>
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Cart items */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-          {cart_items.map((entry) => {
-            const item = entry.item;
+        {/* Items */}
+        <div className="bg-white rounded-xl border overflow-hidden">
+          <div className="px-6 py-4 border-b bg-gray-50">
+            <h2 className="font-semibold text-gray-700">Items</h2>
+          </div>
 
-            return (
-              <Card
-                key={entry.id}
-                className="hover:shadow-lg transition"
-              >
-                <CardContent className="p-4">
-                  <img
-                    src={getImage(item)}
-                    alt={item.item_name}
-                    className="w-full h-44 object-cover rounded-md mb-3"
-                  />
+          {data.items && data.items.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead className="bg-gray-50">
+                  <tr className="text-left text-gray-600 uppercase text-xs tracking-wider">
+                    <th className="px-6 py-4">Item</th>
+                    <th className="px-6 py-4 text-right">Quantity</th>
+                    <th className="px-6 py-4 text-right">Unit Price</th>
+                    <th className="px-6 py-4 text-right">Total</th>
+                  </tr>
+                </thead>
 
-                  <div className="space-y-1">
-                    <h3 className="font-semibold text-gray-900 truncate">
-                      {item.item_name}
-                    </h3>
+                <tbody className="divide-y">
+                  {data.items.map((line) => (
+                    <tr key={line.id} className="hover:bg-gray-50 transition">
+                      <td className="px-6 py-4 font-medium text-gray-800">
+                        {line.item?.item_name || "Unavailable"}
+                      </td>
+                      <td className="px-6 py-4 text-right text-gray-700">
+                        {line.quantity}
+                      </td>
+                      <td className="px-6 py-4 text-right text-gray-700">
+                        {formatCurrency(line.unit_price)}
+                      </td>
+                      <td className="px-6 py-4 text-right font-medium text-gray-800">
+                        {formatCurrency(line.total_price)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="p-6 text-center text-gray-500">
+              This cart has no items.
+            </div>
+          )}
+        </div>
 
-                    <p className="text-sm text-gray-500">
-                      Price: {formatCurrency(item.price)}
-                    </p>
+        {/* Summary */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg">
+          <div className="bg-gray-50 rounded-xl border p-5">
+            <p className="text-sm text-gray-500">Total Quantity</p>
+            <p className="text-2xl font-semibold text-gray-800">
+              {data.total_quantity}
+            </p>
+          </div>
 
-                    <p className="text-xs text-gray-400 flex items-center gap-1">
-                      <Package className="w-3 h-3" />
-                      Stock: {item.quantity}
-                    </p>
-
-                    <span className="inline-block mt-2 text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">
-                      {item.status}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+          <div className="bg-gray-50 rounded-xl border p-5">
+            <p className="text-sm text-gray-500">Total Price</p>
+            <p className="text-2xl font-semibold text-gray-800">
+              {formatCurrency(data.total_price)}
+            </p>
+          </div>
         </div>
       </div>
     </DashboardLayout>

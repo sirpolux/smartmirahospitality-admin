@@ -1,25 +1,42 @@
 import React, { useEffect, useState } from "react";
-import { Eye, Filter, Search } from "lucide-react";
+import { Eye, Search } from "lucide-react";
 import { Link, router } from "@inertiajs/react";
 import DashboardLayout from "../DashboardLayout";
 import Breadcrumbs from "@/Components/Breadcrumb";
+import Pagination from "@/Components/Pagination";
 
-export default function Index({ orders, filters = {} , breadcrumbs }) {
-    const [status, setStatus] = useState(
-        filters.status ?? "ALL"
-    );
-    const [search, setSearch] = useState(filters.search ?? "");
+const statusStyles = {
+    pending: "bg-yellow-100 text-yellow-800 border border-yellow-300",
+    received: "bg-blue-100 text-blue-800 border border-blue-300",
+    packaged: "bg-indigo-100 text-indigo-800 border border-indigo-300",
+    shipped: "bg-purple-100 text-purple-800 border border-purple-300",
+    delivered: "bg-green-100 text-green-800 border border-green-300",
+    cancelled: "bg-red-100 text-red-800 border border-red-300",
+};
+
+const statusLabels = {
+    pending: "Pending",
+    received: "Received",
+    packaged: "Packaged",
+    shipped: "Shipped",
+    delivered: "Delivered",
+    cancelled: "Cancelled",
+};
+
+export default function Index({ orders, filters = {}, queryParams = {}, breadcrumbs }) {
+    const [status, setStatus] = useState(filters.status ?? "");
+    const [search, setSearch] = useState(filters.keyword ?? "");
 
     /**
-     * Debounced search & status filter
+     * Debounced search
      */
     useEffect(() => {
         const timeout = setTimeout(() => {
             router.get(
                 route("order.index"),
                 {
+                    keyword: search,
                     status,
-                    search,
                 },
                 {
                     preserveState: true,
@@ -29,35 +46,42 @@ export default function Index({ orders, filters = {} , breadcrumbs }) {
         }, 400);
 
         return () => clearTimeout(timeout);
-    }, [status, search]);
+    }, [search]);
 
-    const getStatusStyle = (status) => {
-        switch (status) {
-            case "PAID":
-                return "bg-green-100 text-green-800 border border-green-300";
-            case "PENDING_PAYMENT":
-                return "bg-yellow-100 text-yellow-800 border border-yellow-300";
-            case "PROCESSING":
-                return "bg-blue-100 text-blue-800 border border-blue-300";
-            case "CANCELED":
-                return "bg-red-100 text-red-800 border border-red-300";
-            default:
-                return "bg-gray-100 text-gray-800 border border-gray-300";
-        }
+    const handleStatusChange = (e) => {
+        const nextStatus = e.target.value;
+        setStatus(nextStatus);
+        router.get(
+            route("order.index"),
+            {
+                keyword: search,
+                status: nextStatus,
+            },
+            {
+                preserveState: true,
+                replace: true,
+            }
+        );
     };
+
+    const formatCurrency = (value) =>
+        "₦" + Number(value || 0).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
 
     return (
         <DashboardLayout>
-            <Breadcrumbs breadcrumbs={breadcrumbs} /> 
+            <Breadcrumbs breadcrumbs={breadcrumbs} />
 
             <div className="p-6 space-y-6">
-
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
                     <div>
-                        <h1 className="text-2xl font-semibold">Orders</h1>
+                        <h1 className="text-2xl font-bold text-gray-800">Orders</h1>
                         <p className="text-sm text-gray-500">
-                            Manage and track customer orders
+                            Review customer orders, update fulfilment status, and manage
+                            payments.
                         </p>
                     </div>
 
@@ -68,35 +92,26 @@ export default function Index({ orders, filters = {} , breadcrumbs }) {
                             <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
                             <input
                                 type="text"
-                                placeholder="Search customer name"
+                                placeholder="Search customer name / receipt ref"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm w-full sm:w-64 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                                className="pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm w-full sm:w-72 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                             />
                         </div>
 
                         {/* Status Filter */}
-                        <div className="flex items-center gap-2">
-                            <Filter className="w-4 h-4 text-gray-500" />
-                            <select
-                                value={status}
-                                onChange={(e) => setStatus(e.target.value)}
-                                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                            >
-                                <option value="ALL">All</option>
-                                <option value="PENDING_CONFIRMATION">
-                                    Pending Confirmation
+                        <select
+                            value={status}
+                            onChange={handleStatusChange}
+                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                        >
+                            <option value="">All Statuses</option>
+                            {Object.entries(statusLabels).map(([value, label]) => (
+                                <option key={value} value={value}>
+                                    {label}
                                 </option>
-                                <option value="PENDING_PAYMENT">
-                                    Pending Payment
-                                </option>
-                                <option value="PROCESSING">Processing</option>
-                                <option value="PAID">Paid</option>
-                                <option value="SAVED">Saved</option>
-                                <option value="COMPLETED">Completed</option>
-                                <option value="CANCELED">Canceled</option>
-                            </select>
-                        </div>
+                            ))}
+                        </select>
                     </div>
                 </div>
 
@@ -121,6 +136,9 @@ export default function Index({ orders, filters = {} , breadcrumbs }) {
                                     Total
                                 </th>
                                 <th className="px-4 py-3 text-sm font-medium text-gray-600">
+                                    Receipt Ref
+                                </th>
+                                <th className="px-4 py-3 text-sm font-medium text-gray-600">
                                     Date
                                 </th>
                                 <th className="px-4 py-3 text-sm font-medium text-right text-gray-600">
@@ -133,7 +151,7 @@ export default function Index({ orders, filters = {} , breadcrumbs }) {
                             {orders.data.length === 0 ? (
                                 <tr>
                                     <td
-                                        colSpan={7}
+                                        colSpan={8}
                                         className="text-center py-8 text-gray-500"
                                     >
                                         No orders found
@@ -146,38 +164,33 @@ export default function Index({ orders, filters = {} , breadcrumbs }) {
                                         className="hover:bg-gray-50 transition"
                                     >
                                         <td className="px-4 py-3 font-medium">
-                                            ORD-{order.id}
+                                            #{order.id}
                                         </td>
                                         <td className="px-4 py-3">
-                                            {order.cart?.user?.name}
+                                            {order.user?.name || "Guest"}
                                         </td>
                                         <td className="px-4 py-3">
                                             <span
-                                                className={`px-2 py-1 text-xs rounded-full font-medium ${getStatusStyle(
-                                                    order.status
-                                                )}`}
+                                                className={`px-2 py-1 text-xs rounded-full font-medium ${statusStyles[order.status] || statusStyles.pending}`}
                                             >
-                                                {order.status.replace("_", " ")}
+                                                {statusLabels[order.status] || order.status}
                                             </span>
                                         </td>
                                         <td className="px-4 py-3">
-                                            {order.cart?.item_count}
+                                            {order.total_quantity}
                                         </td>
-                                        <td className="px-4 py-3">
-                                            ₦
-                                            {order.total_cost.toLocaleString(
-                                                undefined,
-                                                { minimumFractionDigits: 2 }
-                                            )}
+                                        <td className="px-4 py-3 font-medium">
+                                            {formatCurrency(order.total_price)}
                                         </td>
                                         <td className="px-4 py-3 text-sm text-gray-500">
-                                            {new Date(
-                                                order.created_at
-                                            ).toLocaleDateString()}
+                                            {order.receipt_ref || "—"}
+                                        </td>
+                                        <td className="px-4 py-3 text-sm text-gray-500">
+                                            {new Date(order.created_at).toLocaleDateString()}
                                         </td>
                                         <td className="px-4 py-3 text-right">
                                             <Link
-                                                href={`/order/${order.cart?.id}`}
+                                                href={route("order.show", order.id)}
                                                 className="inline-flex items-center gap-1 px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
                                             >
                                                 <Eye className="w-4 h-4" />
@@ -192,23 +205,7 @@ export default function Index({ orders, filters = {} , breadcrumbs }) {
                 </div>
 
                 {/* Pagination */}
-                {orders.meta?.links?.length > 3 && (
-                    <div className="flex justify-center mt-6 gap-2">
-                        {orders.meta.links.map((link, index) => (
-                            <Link
-                                href={link.url ?? "#"}
-                                preserveScroll
-                                preserveState
-                                className={`px-3 py-1 text-sm rounded-lg ${link.active
-                                    ? "bg-indigo-600 text-white"
-                                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                                    } ${!link.url && "pointer-events-none opacity-50"}`}
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                            />
-
-                        ))}
-                    </div>
-                )}
+                <Pagination links={orders.meta?.links} queryParams={queryParams} />
             </div>
         </DashboardLayout>
     );

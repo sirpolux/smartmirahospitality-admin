@@ -14,6 +14,13 @@ class UserDetailResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'phone' => $this->phone,
+            'company_name' => $this->company_name,
+            'address' => $this->address,
+            'city' => $this->city,
+            'state' => $this->state,
+            'business_type' => $this->business_type,
+        ];
     }
 }

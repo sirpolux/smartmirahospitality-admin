@@ -2,65 +2,101 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
+use App\Http\Resources\OrderResource;
 use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of orders for admin review.
      */
     public function index()
     {
-        //
+        $sortField = request('sort_field', 'id');
+        $sortDirection = request('sort_direction', 'desc');
+        $keyword = request('keyword');
+        $status = request('status');
+
+        $query = Order::query()->with('user.userDetails');
+
+        if (!empty($keyword)) {
+            $query->where(function ($q) use ($keyword) {
+                $q->whereHas('user', function ($userQuery) use ($keyword) {
+                    $userQuery->where('name', 'like', "%{$keyword}%")
+                        ->orWhere('email', 'like', "%{$keyword}%");
+                })->orWhere('receipt_ref', 'like', "%{$keyword}%");
+            });
+        }
+
+        if (!empty($status) && in_array($status, Order::STATUSES, true)) {
+            $query->where('status', $status);
+        }
+
+        $orders = $query->orderBy($sortField, $sortDirection)
+            ->paginate(20)
+            ->withQueryString();
+
+        return inertia('Order/Index', [
+            'orders' => OrderResource::collection($orders),
+            'queryParams' => request()->query(),
+            'filters' => [
+                'keyword' => $keyword,
+                'status' => $status,
+                'sort_field' => $sortField,
+                'sort_direction' => $sortDirection,
+            ],
+            'pagination' => [
+                'total' => $orders->total(),
+                'per_page' => $orders->perPage(),
+                'current' => $orders->currentPage(),
+                'last_page' => $orders->lastPage(),
+            ],
+            'breadcrumbs' => [
+                ['label' => 'Orders', 'url' => route('order.index')],
+            ],
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreOrderRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
+     * Display the specified order with customer, items and transactions.
      */
     public function show(Order $order)
     {
-        //
+        $order->load(['user.userDetails', 'items.item', 'transactions.user']);
+
+        return inertia('Order/Show', [
+            'order' => new OrderResource($order),
+            'breadcrumbs' => [
+                ['label' => 'Orders', 'url' => route('order.index')],
+                ['label' => "Order #{$order->id}", 'url' => route('order.show', $order->id)],
+            ],
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the order status.
      */
-    public function edit(Order $order)
+    public function updateStatus(UpdateOrderRequest $request, Order $order)
     {
-        //
-    }
+        $admin = Auth::user();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateOrderRequest $request, Order $order)
-    {
-        //
-    }
+        $data = ['status' => $request->status];
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Order $order)
-    {
-        //
+        if ($request->status === 'received') {
+            $data['delivery_confirmed_by'] = $admin->name;
+        }
+
+        if ($request->status === 'delivered') {
+            $data['delivered_by'] = $admin->name;
+        }
+
+        $order->update($data);
+
+        return back()->with([
+            'message' => "Order #{$order->id} status updated to {$request->status}",
+            'status' => 'success',
+        ]);
     }
 }

@@ -14,6 +14,14 @@ class CartResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'total_quantity' => $this->total_quantity,
+            'total_price' => $this->total_price,
+            'status' => $this->status,
+            'created_at' => $this->created_at,
+            'user' => $this->user ? new UserBaseResource($this->user) : null,
+            'items' => CartItemResource::collection($this->whenLoaded('items')),
+        ];
     }
 }

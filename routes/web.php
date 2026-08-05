@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
-use App\Http\Controllers\CartItemController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ItemCategoryController;
 use App\Http\Controllers\ItemController;
@@ -35,12 +35,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('item', ItemController::class);
-    Route::resource('cart', CartItemController::class);
+    Route::get('cart/{cart}', [CartController::class, 'show'])->name('cart.show');
+    Route::get('cart', [CartController::class, 'index'])->name('cart.index');
     Route::resource('stock', StockController::class);
-    Route::resource('order', OrderController::class);
-    Route::resource('transactions', TransactionController::class);
+    Route::get('order/{order}', [OrderController::class, 'show'])->name('order.show');
+    Route::patch('order/{order}/status', [OrderController::class, 'updateStatus'])->name('order.status.update');
+    Route::get('order', [OrderController::class, 'index'])->name('order.index');
+    Route::get('transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
+    Route::patch('transactions/{transaction}/status', [TransactionController::class, 'updateStatus'])->name('transactions.status.update');
+    Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::resource('account', AccountController::class);
-    Route::resource('cart-item', CartItemController::class);
     Route::resource('item-details', ItemDetailsController::class);
     // Route::post('item/image/upload/{item}', [ItemController::class, 'uploadImage'])->name('item.image.store');
 

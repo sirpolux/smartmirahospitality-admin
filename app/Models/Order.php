@@ -38,6 +38,15 @@ class Order extends Model
     public const STATUS_DELIVERED = 'delivered';
     public const STATUS_CANCELLED = 'cancelled';
 
+    public const STATUSES = [
+        self::STATUS_PENDING,
+        self::STATUS_RECEIVED,
+        self::STATUS_PACKAGED,
+        self::STATUS_SHIPPED,
+        self::STATUS_DELIVERED,
+        self::STATUS_CANCELLED,
+    ];
+
     /**
      * Ordered tracking stages; entries after the current status are "upcoming".
      */

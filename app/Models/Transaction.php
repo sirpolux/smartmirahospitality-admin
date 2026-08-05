@@ -33,6 +33,14 @@ class Transaction extends Model
     public const STATUS_FAILED = 'failed';
     public const STATUS_REFUNDED = 'refunded';
 
+    public const STATUSES = [
+        self::STATUS_PENDING,
+        self::STATUS_CONFIRMED,
+        self::STATUS_REJECTED,
+        self::STATUS_FAILED,
+        self::STATUS_REFUNDED,
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -41,6 +49,11 @@ class Transaction extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class, 'order_id');
+    }
+
+    public function confirmedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'confirmed_by');
     }
 
     public function uploads(): HasMany

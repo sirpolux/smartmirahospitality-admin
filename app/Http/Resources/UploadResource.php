@@ -14,6 +14,10 @@ class UploadResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'file_path' => $this->file_path,
+            'file_type' => $this->file_type,
+        ];
     }
 }
