@@ -19,7 +19,7 @@ class CloudinaryService
         ]);
     }
 
-    public function upload($file, string $folder = 'ovey_store'): array
+    public function upload($file, string $folder = 'smart_mirah_hospitality'): array
     {
         $result = (new UploadApi())->upload($file->getRealPath(), [
             'folder' => $folder,
