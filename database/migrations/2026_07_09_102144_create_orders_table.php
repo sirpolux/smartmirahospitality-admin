@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('transaction_id')->nullable()->constrained('transactions')->nullOnDelete();
             $table->integer('total_quantity');
             $table->double('total_price');
-            $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'received', 'packaged', 'shipped', 'delivered', 'cancelled'])->default('pending');
             $table->string('delivery_channel')->nullable();
             $table->string('delivery_confirmed_by')->nullable();
             $table->string('delivered_by')->nullable();

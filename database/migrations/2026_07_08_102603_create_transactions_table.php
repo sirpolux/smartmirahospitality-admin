@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->double('amount');
             $table->string('description')->nullable();
-            $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
+            $table->enum('status', ['pending', 'confirmed', 'rejected', 'failed', 'refunded'])->default('pending');
             $table->enum('purpose', ['payment', 'refund'])->default('payment');
             $table->foreignId('confirmed_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('order_id')->nullable()->constrained('orders')->nullOnDelete();
