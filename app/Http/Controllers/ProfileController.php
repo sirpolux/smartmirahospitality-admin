@@ -25,6 +25,16 @@ class ProfileController extends Controller
     }
 
     /**
+     * Display the change password form.
+     */
+    public function editPassword(): Response
+    {
+        return Inertia::render('Profile/ChangePassword', [
+            'status' => session('status'),
+        ]);
+    }
+
+    /**
      * Update the user's profile information.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse

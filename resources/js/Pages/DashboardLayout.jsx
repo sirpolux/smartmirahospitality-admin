@@ -5,6 +5,7 @@ import {
     MdOutlineShoppingCart,
     MdOutlineInventory,
     MdSettings,
+    MdLockOutline,
     MdOutlineSavings
 } from "react-icons/md";
 import { FaUsers } from "react-icons/fa6";
@@ -24,7 +25,7 @@ export default function DashboardLayout({ children}) {
 
     const logout = () => router.post(route("logout"));
 
-    const currentRoute =  "";
+    const currentRouteName = route().current();
 
     const menuItems = [
         { label: "Dashboard", link: "dashboard", icon: <MdDashboard className="text-xl" /> },
@@ -38,6 +39,7 @@ export default function DashboardLayout({ children}) {
         // {label: "Sales", link: "sales.index", icon: <FcSalesPerformance className="text-xl" />},
         // { label: "Users", link: "user.index", icon: <FaUsers className="text-xl" /> },
        // { label: "Settings", link: "settings.index", icon: <MdSettings className="text-xl" /> },
+        { label: "Change Password", link: "password.change", icon: <MdLockOutline className="text-xl" /> },
     ];
 
     return (
@@ -81,7 +83,7 @@ export default function DashboardLayout({ children}) {
                         {/* Navigation */}
                         <nav className="flex-1 space-y-1 mt-4">
                             {menuItems.map(({ label, link, icon }) => {
-                                const isActive = currentRoute.includes(route(link));
+                                const isActive = currentRouteName === link;
 
                                 return (
                                     <Link
